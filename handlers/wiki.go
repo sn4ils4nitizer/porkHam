@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	//"os"
 	"porkHam/utils"
@@ -39,6 +41,7 @@ func CreatePage(w http.ResponseWriter, r *http.Request) {
 	}
 	err = utils.WriteFile(name, string(body))
 	if err != nil {
+		log.Printf("Error saving page %s: %v", name, err) // Log the actual error
 		http.Error(w, "Failed to save page", http.StatusInternalServerError)
 		return
 	}
@@ -79,4 +82,22 @@ func ModifyPage(w http.ResponseWriter, r *http.Request) {
 	//Success message
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "Page %s modified successfully!", name)
+}
+
+func ListPages(w http.ResponseWriter, r *http.Request) {
+	log.Println("Received request for /api/wiki/list") // Debugging line
+	files, err := ioutil.ReadDir("pages")
+	if err != nil {
+		http.Error(w, "Could not read pages directory", http.StatusInternalServerError)
+		return
+	}
+	var pageNames []string
+	for _, file := range files {
+		if file.IsDir() {
+			continue // skip directories in /pages
+		}
+		pageNames = append(pageNames, file.Name())
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(pageNames)
 }

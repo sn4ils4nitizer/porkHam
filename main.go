@@ -13,11 +13,11 @@ func main() {
 	router := mux.NewRouter()
 
 	//Routes - takes URL, GetPage etc... defined elswhere (probably handlers.go lol)
+	router.HandleFunc("/api/wiki/list", handlers.ListPages).Methods("GET")
 	router.HandleFunc("/api/wiki/{name}", handlers.GetPage).Methods("GET")
 	router.HandleFunc("/api/wiki/{name}", handlers.CreatePage).Methods("POST")
 	router.HandleFunc("/api/wiki/{name}", handlers.DeletePage).Methods("DELETE")
 	router.HandleFunc("/api/wiki/{name}", handlers.ModifyPage).Methods("PUT")
-	//router.HandleFunc("/api/wiki/list", handlers.ListPages).Methods("Get")
 
 	// Start server
 	// If server fails to start error is logges and program crashes,
