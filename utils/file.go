@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 )
 
 // sets directory
@@ -11,7 +12,8 @@ const pagesDir = "pages/"
 
 // Read file from disk
 func ReadFile(name string) (string, error) {
-	content, err := ioutil.ReadFile(pagesDir + name + ".html")
+	filePath := filepath.Join(pagesDir, name+".html")
+	content, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return "", err
 	}
