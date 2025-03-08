@@ -13,7 +13,7 @@ func main() {
 	router := mux.NewRouter()
 
 	//Routes - takes URL, GetPage etc... defined elswhere (probably handlers.go lol)
-	router.HandleFunc("/api/wiki/list", handlers.ListPages).Methods("GET")
+	router.HandleFunc("/api/wiki2/list", handlers.ListPages).Methods("GET")
 	router.HandleFunc("/api/wiki/{name}", handlers.GetPage).Methods("GET")
 	router.HandleFunc("/api/wiki/{name}", handlers.CreatePage).Methods("POST")
 	router.HandleFunc("/api/wiki/{name}", handlers.DeletePage).Methods("DELETE")

@@ -18,6 +18,7 @@ import (
 func GetPage(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)  // Vars extract URL params, part of Mux
 	name := vars["name"] // name is set to vars - which is extracted from r
+	log.Println("Requested page: " + name)
 
 	//if there is no file
 	content, err := utils.ReadFile(name) // tries to read file
