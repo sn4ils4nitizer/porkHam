@@ -16,6 +16,7 @@ import (
 // GetPage - extracts name from the URL, uses utils.ReadFile(name) to get the page
 // shows message is file does not exist, if exists sets Content-Type: text/html, return content
 func GetPage(w http.ResponseWriter, r *http.Request) {
+
 	vars := mux.Vars(r)  // Vars extract URL params, part of Mux
 	name := vars["name"] // name is set to vars - which is extracted from r
 	log.Println("Requested page: " + name)
@@ -32,6 +33,7 @@ func GetPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func CreatePage(w http.ResponseWriter, r *http.Request) {
+
 	vars := mux.Vars(r)
 	name := vars["name"]
 
@@ -52,6 +54,7 @@ func CreatePage(w http.ResponseWriter, r *http.Request) {
 
 // Delete page
 func DeletePage(w http.ResponseWriter, r *http.Request) {
+
 	vars := mux.Vars(r)
 	name := vars["name"]
 
@@ -64,6 +67,7 @@ func DeletePage(w http.ResponseWriter, r *http.Request) {
 }
 
 func ModifyPage(w http.ResponseWriter, r *http.Request) {
+
 	vars := mux.Vars(r)
 	name := vars["name"]
 
@@ -86,6 +90,7 @@ func ModifyPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func ListPages(w http.ResponseWriter, r *http.Request) {
+
 	log.Println("Received request for /api/wiki/list") // Debugging line
 	files, err := ioutil.ReadDir("pages")
 	if err != nil {
