@@ -6,7 +6,10 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
+
 	//"os"
+	//"path/filepath"
 	"porkHam/utils"
 
 	"github.com/gorilla/mux"
@@ -21,14 +24,18 @@ func GetPage(w http.ResponseWriter, r *http.Request) {
 	name := vars["name"] // name is set to vars - which is extracted from r
 	log.Println("Requested page: " + name)
 
+	filePath := name
+	log.Println("Attempting to read file: ", filePath)
 	//if there is no file
-	content, err := utils.ReadFile(name) // tries to read file
+	content, err := utils.ReadFile(filePath) // tries to read file
 	if err != nil {
 		http.Error(w, "Page not found", http.StatusNotFound)
+		log.Println("Content Read Error")
 		return
 	}
 
 	w.Header().Set("Content-Type", "text/html")
+	log.Println("Page read success: ", content)
 	w.Write([]byte(content))
 }
 
@@ -37,12 +44,18 @@ func CreatePage(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	name := vars["name"]
 
+	name = strings.TrimSpace(name)
+	log.Println("Creating page with name: ", name)
+
+	filePath := "/" + name
+	log.Println("Saving file to: ", filePath)
+
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
-	err = utils.WriteFile(name, string(body))
+	err = utils.WriteFile(filePath, string(body))
 	if err != nil {
 		log.Printf("Error saving page %s: %v", name, err) // Log the actual error
 		http.Error(w, "Failed to save page", http.StatusInternalServerError)

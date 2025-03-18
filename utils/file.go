@@ -3,16 +3,21 @@ package utils
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 )
 
 // sets directory
-const pagesDir = "pages/"
+const pagesDir = "pages"
 
 // Read file from disk
 func ReadFile(name string) (string, error) {
-	filePath := filepath.Join(pagesDir, name+".html")
+	filePath := filepath.Join(pagesDir, name)
+
+	absPath, _ := filepath.Abs(filePath)
+	log.Println("file.go: Attempting to read file: ", absPath)
+
 	content, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return "", err
