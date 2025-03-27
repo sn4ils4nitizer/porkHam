@@ -12,12 +12,18 @@ func main() {
 	// Initialize mux router, will define api endpoint
 	router := mux.NewRouter()
 
-	//Routes - takes URL, GetPage etc... defined elswhere (probably handlers.go lol)
+	// WIKI ROUTES
+	// Methods defined in porkHam/handlers/wiki.go
 	router.HandleFunc("/api/wiki2/list", handlers.ListPages).Methods("GET")
 	router.HandleFunc("/api/wiki/{name}", handlers.GetPage).Methods("GET")
 	router.HandleFunc("/api/wiki/{name}", handlers.CreatePage).Methods("POST")
 	router.HandleFunc("/api/wiki/{name}", handlers.DeletePage).Methods("DELETE")
 	router.HandleFunc("/api/wiki/{name}", handlers.ModifyPage).Methods("PUT")
+
+	// TODO
+	// WEATHER ROUTES
+	//Methods defined in porkHam/handler/weather.go
+	router.HandleFunc("/api/weather/{location}", handlers.WeatherHandler).Methods("GET")
 
 	cors := gorillaHandler.CORS(
 		gorillaHandler.AllowedOrigins([]string{"*"}),
