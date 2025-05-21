@@ -14,7 +14,7 @@ func QueryHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
-	cmd := exec.Command("./oracleQuery.pl ", string(prompt))
+	cmd := exec.Command("./oracleQuery.pl", string(prompt))
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		http.Error(w, "Oracle Query Command Failed."+err.Error(), http.StatusInternalServerError)
