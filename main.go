@@ -22,8 +22,12 @@ func main() {
 
 	// TODO
 	// WEATHER ROUTES
-	//Methods defined in porkHam/handler/weather.go
+	// Methods defined in porkHam/handlers/weather.go
 	router.HandleFunc("/api/weather/{location}", handlers.WeatherHandler).Methods("GET")
+
+	// ORACLE ROUTES
+	// Methods defined in handlers/oracle.go
+	router.HandleFunc("/api/oracle/prompt", handlers.QueryHandler).Methods("POST")
 
 	cors := gorillaHandler.CORS(
 		gorillaHandler.AllowedOrigins([]string{"*"}),
