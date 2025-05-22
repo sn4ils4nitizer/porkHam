@@ -28,6 +28,7 @@ func main() {
 	// ORACLE ROUTES
 	// Methods defined in handlers/oracle.go
 	router.HandleFunc("/api/oracle/prompt", handlers.QueryHandler).Methods("POST")
+	router.PathPrefix("/oracleaudio/").Handler(http.StripPrefix("/oracleaudio/", http.FileServer(http.Dir("oracleaudio"))))
 
 	cors := gorillaHandler.CORS(
 		gorillaHandler.AllowedOrigins([]string{"*"}),
