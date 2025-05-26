@@ -11,6 +11,18 @@ import (
 
 func QueryHandler(w http.ResponseWriter, r *http.Request) {
 
+	// CORS preflight check
+	if r.Method == http.MethodOptions {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
+	// Regular CORS headers for actual request
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
 	prompt, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
