@@ -32,7 +32,7 @@ func main() {
 
 	cors := gorillaHandler.CORS(
 		gorillaHandler.AllowedOrigins([]string{"*"}),
-		gorillaHandler.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE"}),
+		gorillaHandler.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
 		gorillaHandler.AllowedHeaders([]string{"Content-Type", "Authorization"}),
 	)
 
