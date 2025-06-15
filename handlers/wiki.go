@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	//"os"
+	"os"
 	//"path/filepath"
 	"porkHam/utils"
 
@@ -70,10 +70,13 @@ func DeletePage(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	name := vars["name"]
+	path := fmt.Sprintf("./pages/%s", name)
+	fmt.Print("Delete request made for ", name, " in path: ", path, "\n")
 
-	err := utils.DeleteFile(name)
+	err := os.Remove(path)
 	if err != nil {
 		http.Error(w, "Failed to delete page", http.StatusInternalServerError)
+		return
 	}
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "Page %s deleted successfully!", name)
