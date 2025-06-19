@@ -20,8 +20,7 @@ func main() {
 	globalRouter.HandleFunc(wikiPath+"{name}", handlers.CreatePage).Methods("POST")
 	globalRouter.HandleFunc(wikiPath+"{name}", handlers.DeletePage).Methods("DELETE")
 	globalRouter.HandleFunc(wikiPath+"{name}", handlers.ModifyPage).Methods("PUT")
-	globalRouter.HandleFunc(wikipath+"{path}/{name}"), handlers.CreatePageV2).Methods("POST")
-	
+
 	globalRouter.HandleFunc("/api/weather/{location}", handlers.WeatherHandler).Methods("GET")
 
 	globalRouter.PathPrefix("/oracleaudio/").Handler(http.StripPrefix("/oracleaudio/", http.FileServer(http.Dir("oracleaudio"))))
