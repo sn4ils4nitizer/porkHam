@@ -9,16 +9,19 @@ import (
 )
 
 func main() {
+
+	var wikiPath = "/api/wiki/"
 	// Router with global CORS middleware applied (for all routes except oracle)
 	globalRouter := mux.NewRouter()
 
 	// Define routes that get global CORS
-	globalRouter.HandleFunc("/api/wiki2/list", handlers.ListPages).Methods("GET")
-	globalRouter.HandleFunc("/api/wiki/{name}", handlers.GetPage).Methods("GET")
-	globalRouter.HandleFunc("/api/wiki/{name}", handlers.CreatePage).Methods("POST")
-	globalRouter.HandleFunc("/api/wiki/{name}", handlers.DeletePage).Methods("DELETE")
-	globalRouter.HandleFunc("/api/wiki/{name}", handlers.ModifyPage).Methods("PUT")
-
+	globalRouter.HandleFunc(wikiPath+"list", handlers.ListPages).Methods("GET")
+	globalRouter.HandleFunc(wikiPath+"{name}", handlers.GetPage).Methods("GET")
+	globalRouter.HandleFunc(wikiPath+"{name}", handlers.CreatePage).Methods("POST")
+	globalRouter.HandleFunc(wikiPath+"{name}", handlers.DeletePage).Methods("DELETE")
+	globalRouter.HandleFunc(wikiPath+"{name}", handlers.ModifyPage).Methods("PUT")
+	globalRouter.HandleFunc(wikipath+"{path}/{name}"), handlers.CreatePageV2).Methods("POST")
+	
 	globalRouter.HandleFunc("/api/weather/{location}", handlers.WeatherHandler).Methods("GET")
 
 	globalRouter.PathPrefix("/oracleaudio/").Handler(http.StripPrefix("/oracleaudio/", http.FileServer(http.Dir("oracleaudio"))))
