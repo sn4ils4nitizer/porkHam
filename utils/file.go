@@ -26,13 +26,13 @@ func ReadFile(name string) (string, error) {
 }
 
 // WriteFile, save HTML content to a file
-func WriteFile(name string, content string) error {
-	if err := os.MkdirAll("pages", os.ModePerm); err != nil {
+func WriteFile(fullpath string, content string) error {
+	dir := filepath.Dir(fullpath)
+	if err := os.MkdirAll(dir, os.ModePerm); err != nil {
 		return fmt.Errorf("failed to create directory: %w", err)
 	}
 
-	filePath := pagesDir + name + ".html"
-	return ioutil.WriteFile(filePath, []byte(content), 0644)
+	return ioutil.WriteFile(fullpath, []byte(content), 0644)
 }
 
 // DeleteFile

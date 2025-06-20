@@ -16,12 +16,15 @@ func main() {
 
 	// Define routes that get global CORS
 	globalRouter.HandleFunc(wikiPath+"list", handlers.ListPages).Methods("GET")
-	globalRouter.HandleFunc(wikiPath+"{name}", handlers.GetPage).Methods("GET")
+	globalRouter.HandleFunc(wikiPath+"listv2", handlers.ListPagesV2).Methods("GET")
+	//globalRouter.HandleFunc(wikiPath+"{name}", handlers.GetPage).Methods("GET")
+	globalRouter.HandleFunc(wikiPath+"{path:.*}", handlers.GetPageV2).Methods("GET")
 	globalRouter.HandleFunc(wikiPath+"{name}", handlers.CreatePage).Methods("POST")
 	globalRouter.HandleFunc(wikiPath+"{name}", handlers.DeletePage).Methods("DELETE")
+	globalRouter.HandleFunc(wikiPath+"{path:.*}", handlers.DeletePageV2).Methods("DELETE")
 	globalRouter.HandleFunc(wikiPath+"{name}", handlers.ModifyPage).Methods("PUT")
-	globalRouter.HandleFunc(wikipath+"{path}/{name}"), handlers.CreatePageV2).Methods("POST")
-	
+	globalRouter.HandleFunc(wikiPath+"{path:.*}/{name}", handlers.CreatePageV2).Methods("POST")
+
 	globalRouter.HandleFunc("/api/weather/{location}", handlers.WeatherHandler).Methods("GET")
 
 	globalRouter.PathPrefix("/oracleaudio/").Handler(http.StripPrefix("/oracleaudio/", http.FileServer(http.Dir("oracleaudio"))))
