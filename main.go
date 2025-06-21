@@ -15,10 +15,10 @@ func main() {
 	globalRouter := mux.NewRouter()
 
 	// Define routes that get global CORS
+	globalRouter.HandleFunc(wikiPath+"{filepath:.*}", handlers.CreatePage).Methods("POST")
 	globalRouter.HandleFunc(wikiPath+"list", handlers.ListPages).Methods("GET")
 	globalRouter.HandleFunc(wikiPath+"{path:.*}", handlers.GetPage).Methods("GET")
 	globalRouter.HandleFunc(wikiPath+"{path:.*}", handlers.DeletePage).Methods("DELETE")
-	globalRouter.HandleFunc(wikiPath+"{path:.*}/{name}", handlers.CreatePage).Methods("POST")
 
 	globalRouter.HandleFunc("/api/weather/{location}", handlers.WeatherHandler).Methods("GET")
 

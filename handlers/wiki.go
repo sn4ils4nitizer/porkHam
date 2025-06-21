@@ -7,7 +7,7 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
-	"strings"
+	//"strings"
 
 	"os"
 	//"path/filepath"
@@ -41,16 +41,11 @@ func GetPage(w http.ResponseWriter, r *http.Request) {
 
 // Second version of CreatePage. This version creates directories too!
 func CreatePage(w http.ResponseWriter, r *http.Request) {
-
 	vars := mux.Vars(r)
-	path := vars["path"]
-	name := vars["name"]
+	filepathParam := vars["filepath"]
 
 	// Clean up spaces from path and name
-	path = strings.TrimSpace(path)
-	name = strings.TrimSpace(name)
-
-	fullpath := filepath.Join("./pages", path, name+".html")
+	fullpath := filepath.Join("./pages", filepathParam+".html")
 
 	log.Println("Saving file to: ", fullpath)
 
@@ -66,7 +61,7 @@ func CreatePage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "Page %s saved successfully!", name)
+	fmt.Fprintf(w, "Page %s saved successfully!", fullpath)
 }
 
 // Delete page
