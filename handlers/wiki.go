@@ -6,7 +6,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strings"
+	"path/filepath"
+	//"strings"
 
 	"os"
 	//"path/filepath"
@@ -19,107 +20,86 @@ import (
 // GetPage - extracts name from the URL, uses utils.ReadFile(name) to get the page
 // shows message is file does not exist, if exists sets Content-Type: text/html, return content
 func GetPage(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	rpath := vars["path"]
 
-	vars := mux.Vars(r)  // Vars extract URL params, part of Mux
-	name := vars["name"] // name is set to vars - which is extracted from r
-	log.Println("Requested page: " + name)
+	log.Println("Requested url: " + rpath)
 
-	filePath := name
-	log.Println("Attempting to read file: ", filePath)
-	//if there is no file
-	content, err := utils.ReadFile(filePath) // tries to read file
+	filePath := filepath.Join(rpath)
+	log.Println("Full path to file: ", filePath)
+
+	content, err := utils.ReadFile(filePath)
 	if err != nil {
 		http.Error(w, "Page not found", http.StatusNotFound)
-		log.Println("Content Read Error")
+		log.Println("Error reading file: ", err)
 		return
 	}
 
 	w.Header().Set("Content-Type", "text/html")
-	log.Println("Page read success: ", content)
 	w.Write([]byte(content))
 }
 
+// Second version of CreatePage. This version creates directories too!
 func CreatePage(w http.ResponseWriter, r *http.Request) {
-
 	vars := mux.Vars(r)
-	name := vars["name"]
+	filepathParam := vars["filepath"]
 
-	name = strings.TrimSpace(name)
-	log.Println("Creating page with name: ", name)
+	// Clean up spaces from path and name
+	fullpath := filepath.Join("./pages", filepathParam+".html")
 
-	filePath := "/" + name
-	log.Println("Saving file to: ", filePath)
+	log.Println("Saving file to: ", fullpath)
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
-	err = utils.WriteFile(filePath, string(body))
+	err = utils.WriteFile(fullpath, string(body))
 	if err != nil {
-		log.Printf("Error saving page %s: %v", name, err) // Log the actual error
-		http.Error(w, "Failed to save page", http.StatusInternalServerError)
+		log.Printf("Error saving page %s: %v", fullpath, err)
+		http.Error(w, "Failed to save the page", http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "Page %s saved successfully!", name)
+	fmt.Fprintf(w, "Page %s saved successfully!", fullpath)
 }
 
 // Delete page
 func DeletePage(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
-	name := vars["name"]
-	path := fmt.Sprintf("./pages/%s", name)
-	fmt.Print("Delete request made for ", name, " in path: ", path, "\n")
+	path := vars["path"]
+	rpath := "./pages/" + path
 
-	err := os.Remove(path)
+	log.Println("Requested deletion of: ", rpath)
+
+	err := os.Remove(rpath)
 	if err != nil {
-		http.Error(w, "Failed to delete page", http.StatusInternalServerError)
+		http.Error(w, "Failed to delete page: "+rpath, http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "Page %s deleted successfully!", name)
-}
+	fmt.Fprintf(w, "Page %s deleted successfully. \n", rpath)
 
-func ModifyPage(w http.ResponseWriter, r *http.Request) {
-
-	vars := mux.Vars(r)
-	name := vars["name"]
-
-	//Read body of the request - this is the new content for the page
-	body, err := ioutil.ReadAll(r.Body)
+	err = utils.DeleteEmptyDirs(filepath.Dir(rpath), "./pages")
 	if err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
-		return
+		log.Println("Error while cleaning up empty directories: ", err)
 	}
-	//Add new contecnt to file
-	err = utils.WriteFile(name, string(body))
-	if err != nil {
-		http.Error(w, "Failed to modify page", http.StatusInternalServerError)
-		return
-	}
-
-	//Success message
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "Page %s modified successfully!", name)
 }
-
 func ListPages(w http.ResponseWriter, r *http.Request) {
 
-	log.Println("Received request for /api/wiki/list") // Debugging line
-	files, err := ioutil.ReadDir("pages")
+	log.Println("Received request for /api/wiki/list")
+
+	tree, err := utils.BuildTree("pages")
 	if err != nil {
-		http.Error(w, "Could not read pages directory", http.StatusInternalServerError)
+		log.Printf("Unable to build tree: %v", err)
+		http.Error(w, "Could not build tree", http.StatusInternalServerError)
 		return
 	}
-	var pageNames []string
-	for _, file := range files {
-		if file.IsDir() {
-			continue // skip directories in /pages
-		}
-		pageNames = append(pageNames, file.Name())
-	}
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(pageNames)
+	err = json.NewEncoder(w).Encode(tree)
+	if err != nil {
+		http.Error(w, "Failed to encode file tree", http.StatusInternalServerError)
+	}
 }
