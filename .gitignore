@@ -1,2 +1,5 @@
 #ignore pages
 /pages/
+
+#ignore secret
+apikeys.txt
